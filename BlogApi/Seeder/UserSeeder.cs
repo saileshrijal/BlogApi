@@ -34,6 +34,7 @@ public class UserSeeder : IUserSeeder
                 Email = "admin@gmail.com",
                 FirstName = "Super",
                 LastName = "Admin",
+                Status = true,
                 UserRole = UserRole.Admin,
                 Password = "Admin@0011"
             };

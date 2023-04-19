@@ -49,6 +49,17 @@ public class AuthManager : IAuthManager
             };
         }
 
+        if (!user.Status)
+        {
+            return new AuthResult
+            {
+                Errors = new List<string>
+                {
+                    "You are not active. Please contact with admin"
+                }
+            };
+        }
+
         return new AuthResult
         {
             Success = true,

@@ -27,7 +27,7 @@ public class UserController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        var users = await _userManager.Users.ToListAsync();
+        var users = await _userManager.GetUsersInRoleAsync(UserRole.User);
         var result = users.Select(x => new
         {
             x.Id,
@@ -35,7 +35,7 @@ public class UserController : ControllerBase
             x.LastName,
             x.UserName,
             x.Email,
-            x.PhoneNumber,
+            x.Status,
             role = _userManager.GetRolesAsync(x).Result.FirstOrDefault()
         });
         return Ok(result);
@@ -53,7 +53,8 @@ public class UserController : ControllerBase
                 UserName = vm.UserName,
                 Email = vm.Email,
                 Password = vm.Password,
-                UserRole = vm.UserRole
+                UserRole = UserRole.User,
+                Status = true
             };
             await _userService.Create(userDto);
             return Ok();
