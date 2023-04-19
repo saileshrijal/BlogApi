@@ -33,6 +33,36 @@ public class UserService : IUserService
         return applicationUser;
     }
 
+    public async Task ToggleUserStatus(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            throw new Exception($"User with id {userId} not found");
+        }
+        user.Status = !user.Status;
+        await _userManager.UpdateAsync(user);
+    }
+
+    public async Task<ApplicationUser> Update(string id, UserDto userDto)
+    {
+        var user = await _userManager.FindByIdAsync(id);
+        if (user == null)
+        {
+            throw new Exception($"User with id {id} not found");
+        }
+        user.FirstName = userDto.FirstName;
+        user.LastName = userDto.LastName;
+        if (userDto.UserName != null || userDto.Email != null)
+        {
+            await Validate(userDto.UserName, userDto.Email);
+            user.UserName = userDto.UserName;
+            user.Email = userDto.Email;
+        }
+        await _userManager.UpdateAsync(user);
+        return user;
+    }
+
     private async Task Validate(string? username, string? email)
     {
         if (await _userManager.FindByNameAsync(username!) != null)
