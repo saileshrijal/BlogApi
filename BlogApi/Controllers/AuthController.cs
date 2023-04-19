@@ -5,7 +5,7 @@ using ViewModels;
 namespace Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthManager _authManager;

@@ -75,6 +75,9 @@ public class AuthManager : IAuthManager
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha256Signature),
         };
+        //adding roles to token
+        var roles = _userManager.GetRolesAsync(user).Result;
+        jwtDescreptor.Subject.AddClaims(roles.Select(x => new Claim(ClaimTypes.Role, x)));
         var token = jwtHandler.CreateToken(jwtDescreptor);
         var jwtToken = jwtHandler.WriteToken(token);
         return jwtToken;

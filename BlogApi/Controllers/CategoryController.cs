@@ -1,5 +1,7 @@
+using BlogApi.Constants;
 using BlogApi.Dtos;
 using BlogApi.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repository.Interface;
 using Services.Interface;
@@ -7,7 +9,8 @@ using Services.Interface;
 namespace BlogApi.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
+[Authorize(Roles = UserRole.Admin)]
 public class CategoryController : ControllerBase
 {
     private readonly ICategoryService _categoryService;
@@ -100,12 +103,12 @@ public class CategoryController : ControllerBase
         }
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
         try
         {
-            var category = await _categoryRepository.GetById(id);
+            var category = await _categoryRepository.Get(x => x.Id == id);
             if (category == null)
             {
                 return NotFound();

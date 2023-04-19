@@ -1,7 +1,9 @@
+using BlogApi.Constants;
 using BlogApi.Dtos;
 using BlogApi.Models;
 using BlogApi.Services.Interface;
 using BlogApi.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +11,8 @@ using Microsoft.EntityFrameworkCore;
 namespace BlogApi.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
+[Authorize(Roles = UserRole.Admin)]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -22,7 +25,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Get()
     {
         var users = await _userManager.Users.ToListAsync();
         var result = users.Select(x => new
