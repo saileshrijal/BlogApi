@@ -87,7 +87,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(string id, UserVM vm)
+    public async Task<IActionResult> Edit(string id, UserVM vm)
     {
         try
         {

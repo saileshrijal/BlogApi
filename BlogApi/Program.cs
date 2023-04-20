@@ -17,6 +17,7 @@ using Repository.Interface;
 using Services;
 using Services.Interface;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -28,7 +29,9 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
       .AddEntityFrameworkStores<ApplicationDbContext>();
 
-    builder.Services.AddControllers();
+    builder.Services.AddControllers()
+      .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
@@ -61,10 +64,13 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddScoped<IUserSeeder, UserSeeder>();
     builder.Services.AddScoped<IAuthManager, AuthManager>();
     builder.Services.AddScoped<IFileHelper, FileHelper>();
+    builder.Services.AddScoped<IPostService, PostService>();
 
     //repositories
     builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
     builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+    builder.Services.AddScoped<IPostRepository, PostRepository>();
+    builder.Services.AddScoped<IPostCategoryRepository, PostCategoryRepository>();
     builder.Services.AddCors();
 }
 

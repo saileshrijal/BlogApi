@@ -1,10 +1,11 @@
+﻿using System.ComponentModel.DataAnnotations;
+
 namespace BlogApi.ViewModels
 {
     public class CategoryVM
     {
-        public int Id { get; set; }
-        public required string? Name { get; set; }
+        [Required(ErrorMessage = "Title is required")]
+        public required string? Title { get; set; }
         public string? Description { get; set; }
-        public string? Slug { get; set; }
     }
 }

@@ -22,6 +22,7 @@ public class UserSeeder : IUserSeeder
 
     public async Task SeedAdminUser()
     {
+
         var adminUser = await _userManager.GetUsersInRoleAsync(UserRole.Admin);
         if (!adminUser.Any())
         {

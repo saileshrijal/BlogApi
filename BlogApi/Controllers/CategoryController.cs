@@ -54,17 +54,10 @@ public class CategoryController : ControllerBase
     {
         try
         {
-            var slug = vm.Name!.Trim().Replace(" ", "-").ToLower();
-            if (_categoryRepository.SlugExists(slug))
-            {
-                ModelState.AddModelError("Slug", "The slug must be unique");
-                return BadRequest(ModelState);
-            }
             var categoryDto = new CategoryDto
             {
-                Name = vm.Name,
+                Title = vm.Title,
                 Description = vm.Description,
-                Slug = vm.Name!.Trim().Replace(" ", "-").ToLower()
             };
             await _categoryService.CreateAsync(categoryDto);
             return Ok();
@@ -76,25 +69,16 @@ public class CategoryController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] CategoryVM vm)
+    public async Task<IActionResult> Edit(int id, [FromBody] CategoryVM vm)
     {
         try
         {
-            var category = await _categoryRepository.Get(x => x.Id == id);
-            var slug = vm.Name!.Trim().Replace(" ", "-").ToLower();
-            if (_categoryRepository.SlugExists(slug) && category.Slug != slug)
-            {
-                ModelState.AddModelError("Slug", "The slug must be unique");
-                return BadRequest(ModelState);
-            }
             var categoryDto = new CategoryDto
             {
-                Id = category.Id,
-                Name = vm.Name,
+                Title = vm.Title,
                 Description = vm.Description,
-                Slug = vm.Name!.Trim().Replace(" ", "-").ToLower()
             };
-            await _categoryService.UpdateAsync(categoryDto);
+            await _categoryService.UpdateAsync(id, categoryDto);
             return Ok();
         }
         catch (Exception ex)
@@ -108,19 +92,7 @@ public class CategoryController : ControllerBase
     {
         try
         {
-            var category = await _categoryRepository.Get(x => x.Id == id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-            var categoryDto = new CategoryDto
-            {
-                Id = category.Id,
-                Name = category.Title,
-                Description = category.Description,
-                Slug = category.Slug
-            };
-            await _categoryService.DeleteAsync(categoryDto);
+            await _categoryService.DeleteAsync(id);
             return Ok();
         }
         catch (Exception ex)

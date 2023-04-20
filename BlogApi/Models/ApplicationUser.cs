@@ -8,4 +8,7 @@ public class ApplicationUser : IdentityUser
     public string? LastName { get; set; }
     public bool Status { get; set; }
     public DateTime CreatedDate { get; set; }
+
+    //navigation property
+    public List<Post> Posts { get; set; } = new List<Post>();
 }

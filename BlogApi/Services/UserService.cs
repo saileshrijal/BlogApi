@@ -1,5 +1,6 @@
 namespace BlogApi.Services;
 
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Transactions;
 using BlogApi.Dtos;
@@ -74,4 +75,6 @@ public class UserService : IUserService
             throw new Exception($"Email {email} already taken. Please use another email");
         }
     }
+
+
 }
