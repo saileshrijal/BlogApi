@@ -145,6 +145,88 @@ public class PostController : ControllerBase
         }
     }
 
+    [HttpGet("{CategoryId}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetPublishedPostsByCategoryId(int CategoryId)
+    {
+        try
+        {
+            var posts = await _postRepository.GetPublishedPostsByCategoryId(CategoryId);
+            var result = posts.Select(x => new
+            {
+                x.Id,
+                x.Title,
+                x.ShortDescription,
+                x.Description,
+                x.ThumbnailUrl,
+                Author = x.ApplicationUser!.FirstName + x.ApplicationUser!.LastName,
+                x.Slug,
+                x.CreatedDate,
+                Categories = x.PostCategories!.Select(c => c.Category!.Title)
+            });
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet("{id}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetPublishedPost(int id)
+    {
+        try
+        {
+            var post = await _postRepository.GetPublishedPost(id);
+            var result = new
+            {
+                post.Id,
+                post.Title,
+                post.ShortDescription,
+                post.Description,
+                post.ThumbnailUrl,
+                Author = post.ApplicationUser!.FirstName + post.ApplicationUser!.LastName,
+                post.Slug,
+                post.CreatedDate,
+                post.IsPublished,
+                Categories = post.PostCategories!.Select(c => c.Category!.Title)
+            };
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetPublishedPosts()
+    {
+        try
+        {
+            var posts = await _postRepository.GetPublishedPosts();
+            var result = posts.Select(x => new
+            {
+                x.Id,
+                x.Title,
+                x.ShortDescription,
+                x.Description,
+                x.ThumbnailUrl,
+                Author = x.ApplicationUser!.FirstName + x.ApplicationUser!.LastName,
+                x.Slug,
+                x.CreatedDate,
+                Categories = x.PostCategories!.Select(c => c.Category!.Title)
+            });
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

@@ -28,6 +28,7 @@ public class PostService : IPostService
             CreatedDate = DateTime.Now,
             Slug = GenerateSlug(postDto.Title!),
             ApplicationUserId = postDto.ApplicationUserId!,
+            IsPublished = postDto.IsPublished,
             PostCategories = categoryIds.Select(x => new PostCategory
             {
                 CategoryId = x
@@ -57,6 +58,7 @@ public class PostService : IPostService
         post.Description = postDto.Description;
         post.ShortDescription = postDto.ShortDescription;
         post.CreatedDate = DateTime.Now;
+        post.IsPublished = postDto.IsPublished;
         if(post.Title != null) { post.Slug  = GenerateSlug(post.Title); }
         post.ThumbnailUrl = postDto.ThumbnailUrl;
 

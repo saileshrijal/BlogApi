@@ -6,5 +6,8 @@ namespace Repository.Interface
     {
         Task<List<Post>> GetPostsWithApplicationUserAndCategory();
         Task<Post> GetPostWithApplicationUserAndCategory(int id);
+        Task<List<Post>> GetPublishedPosts();
+        Task<Post> GetPublishedPost(int id);
+        Task<List<Post>> GetPublishedPostsByCategoryId(int categoryId);
     }
 }
