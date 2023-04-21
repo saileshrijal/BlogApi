@@ -16,6 +16,21 @@ public class UserService : IUserService
         _userManager = userManager;
     }
 
+    public async Task ChangePassword(ChangePasswordDto changePasswordDto)
+    {
+        var user = await _userManager.FindByIdAsync(changePasswordDto.UserId!) ?? throw new Exception("User not found");
+        var checkPassword = await _userManager.CheckPasswordAsync(user, changePasswordDto.OldPassword!);
+        if (!checkPassword) throw new Exception("Old password is incorrect!");
+        await _userManager.ChangePasswordAsync(user, changePasswordDto.OldPassword!, changePasswordDto.NewPassword!);
+    }
+
+    public async Task ResetPassword(ResetPasswordDto resetPasswordDto)
+    {
+        var user = await _userManager.FindByIdAsync(resetPasswordDto.UserId!) ?? throw new Exception("User not found");
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        await _userManager.ResetPasswordAsync(user, token, resetPasswordDto.Password!);
+    }
+
     public async Task<ApplicationUser> Create(UserDto userDto)
     {
         using var tx = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);

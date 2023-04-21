@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BlogApi.Controllers;
 
@@ -120,5 +121,54 @@ public class UserController : ControllerBase
         {
             return BadRequest(ex.Message);
         }
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> ChangePassword(ChangePasswordVM vm)
+    {
+        try
+        {
+            var currentUser = await CurrentUser();
+            var changePasswordDto = new ChangePasswordDto
+            {
+                UserId = currentUser.Id,
+                OldPassword = vm.OldPassword,
+                NewPassword = vm.NewPassword
+            };
+            await _userService.ChangePassword(changePasswordDto);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> ResetPassword(string id, ResetPasswordVM vm)
+    {
+        try
+        {
+            var resetPasswordDto = new ResetPasswordDto
+            {
+                UserId = id,
+                Password = vm.Password
+            };
+            await _userService.ResetPassword(resetPasswordDto);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+
+    private async Task<ApplicationUser> CurrentUser()
+    {
+        var claimsIdentity = (ClaimsIdentity)User.Identity!;
+        var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+        var username = claims!.Value;
+        return await _userManager.FindByNameAsync(username) ?? new ApplicationUser();
     }
 }
