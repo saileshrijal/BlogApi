@@ -63,7 +63,12 @@ public class AuthManager : IAuthManager
         return new AuthResult
         {
             Success = true,
-            Token = GenerateToken(user)
+            Token = GenerateToken(user),
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            UserId = user.Id,
+            UserName = user.UserName,
         };
     }
 
