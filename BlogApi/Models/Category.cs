@@ -8,5 +8,5 @@ public class Category
     public DateTime CreatedDate { get; set; }
 
     //navigation property
-    public List<PostCategory> PostCategories { get; set; } = new List<PostCategory>();
+    public List<PostCategory>? PostCategories { get; set; }
 }

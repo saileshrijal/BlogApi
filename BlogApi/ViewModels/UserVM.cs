@@ -4,8 +4,9 @@ namespace BlogApi.ViewModels
 {
     public class UserVM
     {
-        [Required(ErrorMessage = "Username is required")]
+        [Required(ErrorMessage = "First Name is required")]
         public string? FirstName { get; set; }
+        [Required(ErrorMessage = "Last Name is required")]
         public string? LastName { get; set; }
 
         [Required(ErrorMessage = "Username is required")]

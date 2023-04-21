@@ -58,7 +58,6 @@ public class PostService : IPostService
         post.ShortDescription = postDto.ShortDescription;
         post.CreatedDate = DateTime.Now;
         if(post.Title != null) { post.Slug  = GenerateSlug(post.Title); }
-        post.ApplicationUserId = postDto.ApplicationUserId!;
         post.ThumbnailUrl = postDto.ThumbnailUrl;
 
         var postCategories = await _postCategoryRepository.GetPostCategoriesByPostId(id);

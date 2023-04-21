@@ -44,22 +44,25 @@ public class UserController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(string id)
     {
-        var user = await _userManager.FindByNameAsync(id);
-        if (user == null)
+        try
         {
-            return NotFound();
+            var user = await _userManager.FindByIdAsync(id) ?? throw new Exception("User not found");
+            var result = new
+            {
+                user!.Id,
+                user.FirstName,
+                user.LastName,
+                user.UserName,
+                user.Email,
+                user.Status,
+                role = _userManager.GetRolesAsync(user).Result.FirstOrDefault()
+            };
+            return Ok(result);
         }
-        var result = new
+        catch (Exception ex)
         {
-            user!.Id,
-            user.FirstName,
-            user.LastName,
-            user.UserName,
-            user.Email,
-            user.Status,
-            role = _userManager.GetRolesAsync(user).Result.FirstOrDefault()
-        };
-        return Ok(result);
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpPost]
@@ -87,7 +90,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Edit(string id, UserVM vm)
+    public async Task<IActionResult> Edit(string id, EditUserVM vm)
     {
         try
         {
@@ -95,8 +98,6 @@ public class UserController : ControllerBase
             {
                 FirstName = vm.FirstName,
                 LastName = vm.LastName,
-                UserName = vm.UserName,
-                Email = vm.Email,
             };
             await _userService.Update(id, userDto);
             return Ok();

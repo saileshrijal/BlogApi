@@ -10,5 +10,5 @@ public class ApplicationUser : IdentityUser
     public DateTime CreatedDate { get; set; }
 
     //navigation property
-    public List<Post> Posts { get; set; } = new List<Post>();
+    public List<Post>? Posts { get; set; }
 }

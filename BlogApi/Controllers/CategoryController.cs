@@ -27,7 +27,14 @@ public class CategoryController : ControllerBase
         try
         {
             var categories = await _categoryRepository.GetAll();
-            return Ok(categories);
+            var result = categories.Select(x => new
+            {
+                x.Id,
+                x.Title,
+                x.Description,
+                x.CreatedDate
+            });
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -41,7 +48,14 @@ public class CategoryController : ControllerBase
         try
         {
             var category = await _categoryRepository.GetById(id);
-            return Ok(category);
+            var result = new
+            {
+                category.Id,
+                category.Title,
+                category.Description,
+                category.CreatedDate
+            };
+            return Ok(result);
         }
         catch (Exception ex)
         {

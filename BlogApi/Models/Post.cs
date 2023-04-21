@@ -10,9 +10,10 @@ public class Post
     public string? ThumbnailUrl { get; set; }
     public DateTime? CreatedDate { get; set; }
     public bool IsPublished { get; set; }
-    public string ApplicationUserId { get; set; } = Guid.NewGuid().ToString();
-    public ApplicationUser ApplicationUser { get; set; } = new ApplicationUser();
+
+    public string? ApplicationUserId { get; set; }
+    public ApplicationUser? ApplicationUser { get; set; }
 
     //Navigation Property
-    public List<PostCategory> PostCategories { get; set; } = new List<PostCategory>();
+    public List<PostCategory>? PostCategories { get; set; }
 }

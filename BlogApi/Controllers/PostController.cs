@@ -94,45 +94,55 @@ public class PostController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     {
-        var post = await _postRepository.Get(x => x.Id == id);
-        if (post == null)
+        try
         {
-            return NotFound();
+            var post = await _postRepository.GetPostWithApplicationUserAndCategory(id);
+            var result = new
+            {
+                post.Id,
+                post.Title,
+                post.ShortDescription,
+                post.Description,
+                post.ThumbnailUrl,
+                Author = post.ApplicationUser!.FirstName + post.ApplicationUser!.LastName,
+                post.Slug,
+                post.CreatedDate,
+                post.IsPublished,
+                Categories = post.PostCategories!.Select(c => c.Category!.Title)
+            };
+            return Ok(result);
         }
-        var result = new
+        catch (Exception ex)
         {
-            post.Id,
-            post.Title,
-            post.ShortDescription,
-            post.Description,
-            post.ThumbnailUrl,
-            Author = post.ApplicationUser!.FirstName + post.ApplicationUser!.LastName,
-            post.Slug,
-            post.CreatedDate,
-            post.IsPublished,
-            Categories = post.PostCategories!.Select(c => c.Category!.Title)
-        };
-        return Ok(result);
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        var posts = await _postRepository.GetPostsWithApplicationUserAndCategory();
-        var result = posts.Select(x => new
+        try
         {
-            x.Id,
-            x.Title,
-            x.ShortDescription,
-            x.Description,
-            x.ThumbnailUrl,
-            Author = x.ApplicationUser!.FirstName + x.ApplicationUser!.LastName,
-            x.Slug,
-            x.CreatedDate,
-            x.IsPublished,
-            Categories = x.PostCategories!.Select(c => c.Category!.Title)
-        });
-        return Ok(result);
+            var posts = await _postRepository.GetPostsWithApplicationUserAndCategory();
+            var result = posts.Select(x => new
+            {
+                x.Id,
+                x.Title,
+                x.ShortDescription,
+                x.Description,
+                x.ThumbnailUrl,
+                Author = x.ApplicationUser!.FirstName + x.ApplicationUser!.LastName,
+                x.Slug,
+                x.CreatedDate,
+                x.IsPublished,
+                Categories = x.PostCategories!.Select(c => c.Category!.Title)
+            });
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpDelete("{id}")]

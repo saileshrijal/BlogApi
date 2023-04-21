@@ -27,6 +27,7 @@ public class UserService : IUserService
             FirstName = userDto.FirstName,
             LastName = userDto.LastName,
             CreatedDate = DateTime.UtcNow,
+            Status = userDto.Status,
         };
         await _userManager.CreateAsync(applicationUser, userDto.Password!);
         await _userManager.AddToRoleAsync(applicationUser, userDto.UserRole!);
@@ -47,19 +48,9 @@ public class UserService : IUserService
 
     public async Task<ApplicationUser> Update(string id, UserDto userDto)
     {
-        var user = await _userManager.FindByIdAsync(id);
-        if (user == null)
-        {
-            throw new Exception($"User with id {id} not found");
-        }
+        var user = await _userManager.FindByIdAsync(id) ?? throw new Exception("User not found");
         user.FirstName = userDto.FirstName;
         user.LastName = userDto.LastName;
-        if (userDto.UserName != null || userDto.Email != null)
-        {
-            await Validate(userDto.UserName, userDto.Email);
-            user.UserName = userDto.UserName;
-            user.Email = userDto.Email;
-        }
         await _userManager.UpdateAsync(user);
         return user;
     }
