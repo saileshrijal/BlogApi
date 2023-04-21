@@ -1,6 +1,5 @@
 namespace BlogApi.Services;
 
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Transactions;
 using BlogApi.Dtos;
@@ -11,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 public class UserService : IUserService
 {
     private readonly UserManager<ApplicationUser> _userManager;
+
     public UserService(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
@@ -52,11 +52,7 @@ public class UserService : IUserService
 
     public async Task ToggleUserStatus(string userId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
-        {
-            throw new Exception($"User with id {userId} not found");
-        }
+        var user = await _userManager.FindByIdAsync(userId) ?? throw new Exception($"User with id {userId} not found");
         user.Status = !user.Status;
         await _userManager.UpdateAsync(user);
     }
@@ -70,6 +66,14 @@ public class UserService : IUserService
         return user;
     }
 
+    public async Task UpdateProfile(UpdateProfileDto updateProfileDto)
+    {
+        var user = await _userManager.FindByIdAsync(updateProfileDto.UserId!) ?? throw new Exception("User not found");
+        user.FirstName = updateProfileDto.FirstName;
+        user.LastName = updateProfileDto.LastName;
+        await _userManager.UpdateAsync(user);
+    }
+
     private async Task Validate(string? username, string? email)
     {
         if (await _userManager.FindByNameAsync(username!) != null)
@@ -81,6 +85,4 @@ public class UserService : IUserService
             throw new Exception($"Email {email} already taken. Please use another email");
         }
     }
-
-
 }

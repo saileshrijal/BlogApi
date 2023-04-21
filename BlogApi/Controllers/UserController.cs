@@ -128,6 +128,7 @@ public class UserController : ControllerBase
     {
         try
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var currentUser = await CurrentUser();
             var changePasswordDto = new ChangePasswordDto
             {
@@ -149,6 +150,7 @@ public class UserController : ControllerBase
     {
         try
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var resetPasswordDto = new ResetPasswordDto
             {
                 UserId = id,
@@ -163,6 +165,48 @@ public class UserController : ControllerBase
         }
     }
 
+    [HttpGet]
+    public async Task<IActionResult> MyProfile()
+    {
+        try
+        {
+            var currentUser = await CurrentUser();
+            var result = new
+            {
+                currentUser.FirstName,
+                currentUser.LastName,
+                currentUser.Email,
+                currentUser.UserName,
+            };
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateProfile(EditUserVM vm)
+    {
+        try
+        {
+            if(!ModelState.IsValid) return BadRequest();
+            var currentUser = await CurrentUser();
+            var updateProfileDto = new UpdateProfileDto
+            {
+                UserId = currentUser.Id,
+                FirstName = vm.FirstName,
+                LastName = vm.LastName,
+            };
+            await _userService.UpdateProfile(updateProfileDto);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
     private async Task<ApplicationUser> CurrentUser()
     {

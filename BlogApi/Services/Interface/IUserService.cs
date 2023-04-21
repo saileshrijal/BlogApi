@@ -10,4 +10,5 @@ public interface IUserService
     Task ToggleUserStatus(string userId);
     Task ChangePassword(ChangePasswordDto changePasswordDto);
     Task ResetPassword(ResetPasswordDto resetPasswordDto);
+    Task UpdateProfile(UpdateProfileDto updateProfileDto);
 }
