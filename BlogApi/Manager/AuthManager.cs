@@ -59,7 +59,7 @@ public class AuthManager : IAuthManager
                 }
             };
         }
-
+        var currentUserRoles = await _userManager.GetRolesAsync(user);
         return new AuthResult
         {
             Success = true,
@@ -69,6 +69,7 @@ public class AuthManager : IAuthManager
             Email = user.Email,
             UserId = user.Id,
             UserName = user.UserName,
+            Role = currentUserRoles.FirstOrDefault()
         };
     }
 

@@ -16,7 +16,7 @@ namespace BlogApi.Helper.Interface
             {
                 Directory.CreateDirectory(path);
             }
-            var filename = Guid.NewGuid() + "." + Path.GetExtension(file.FileName);
+            var filename = Guid.NewGuid() + Path.GetExtension(file.FileName);
             var fullPath = Path.Combine(path, filename);
             await using var stream = new FileStream(fullPath, FileMode.Create);
             await file.CopyToAsync(stream);

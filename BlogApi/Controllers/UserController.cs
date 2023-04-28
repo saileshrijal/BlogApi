@@ -13,7 +13,8 @@ namespace BlogApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-[Authorize(Roles = UserRole.Admin)]
+[Authorize]
+
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -26,6 +27,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = UserRole.Admin)]
     public async Task<IActionResult> Get()
     {
         var users = await _userManager.GetUsersInRoleAsync(UserRole.User);
@@ -43,6 +45,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = UserRole.Admin)]
     public async Task<IActionResult> Get(string id)
     {
         try
@@ -67,6 +70,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = UserRole.Admin)]
     public async Task<IActionResult> Create(UserVM vm)
     {
         try
@@ -91,6 +95,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = UserRole.Admin)]
     public async Task<IActionResult> Edit(string id, EditUserVM vm)
     {
         try
@@ -110,6 +115,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("{id}")]
+    [Authorize(Roles = UserRole.Admin)]
     public async Task<IActionResult> ToggleUserStatus(string id)
     {
         try
@@ -146,6 +152,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = UserRole.Admin)]
     public async Task<IActionResult> ResetPassword(string id, ResetPasswordVM vm)
     {
         try
@@ -171,12 +178,14 @@ public class UserController : ControllerBase
         try
         {
             var currentUser = await CurrentUser();
+            var currentUserRole = await _userManager.GetRolesAsync(currentUser);
             var result = new
             {
                 currentUser.FirstName,
                 currentUser.LastName,
                 currentUser.Email,
                 currentUser.UserName,
+                Role = currentUserRole.FirstOrDefault()
             };
             return Ok(result);
         }
@@ -191,7 +200,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            if(!ModelState.IsValid) return BadRequest();
+            if (!ModelState.IsValid) return BadRequest();
             var currentUser = await CurrentUser();
             var updateProfileDto = new UpdateProfileDto
             {

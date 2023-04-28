@@ -57,11 +57,13 @@ public class PostService : IPostService
         post.Title = postDto.Title;
         post.Description = postDto.Description;
         post.ShortDescription = postDto.ShortDescription;
-        post.CreatedDate = DateTime.Now;
         post.IsPublished = postDto.IsPublished;
         if(post.Title != null) { post.Slug  = GenerateSlug(post.Title); }
-        post.ThumbnailUrl = postDto.ThumbnailUrl;
-
+        if(postDto.ThumbnailUrl != null)
+        {
+            post.ThumbnailUrl = postDto.ThumbnailUrl;
+        }
+        
         var postCategories = await _postCategoryRepository.GetPostCategoriesByPostId(id);
 
         var CategoryIdsToRemove = postCategories.Select(x => x.CategoryId).Except(categoryIds).ToList();

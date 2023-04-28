@@ -44,6 +44,7 @@ public class CategoryController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> Get(int id)
     {
         try

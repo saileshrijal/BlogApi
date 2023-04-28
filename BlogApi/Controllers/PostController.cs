@@ -35,6 +35,7 @@ public class PostController : ControllerBase
     {
         try
         {
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
             var currentUser = await CurrentUser();
             var postDto = new PostDto
             {
@@ -108,7 +109,7 @@ public class PostController : ControllerBase
                 post.Slug,
                 post.CreatedDate,
                 post.IsPublished,
-                Categories = post.PostCategories!.Select(c => c.Category!.Title)
+                Categories = post.PostCategories!.Select(c => new { c.Category!.Id, c.Category!.Title })
             };
             return Ok(result);
         }
@@ -200,6 +201,34 @@ public class PostController : ControllerBase
         }
     }
 
+    [HttpGet("{slug}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetPublishedPostBySlug(string slug)
+    {
+        try
+        {
+            var post = await _postRepository.GetPublishedPostBySlug(slug);
+            var result = new
+            {
+                post.Id,
+                post.Title,
+                post.ShortDescription,
+                post.Description,
+                post.ThumbnailUrl,
+                Author = post.ApplicationUser!.FirstName + post.ApplicationUser!.LastName,
+                post.Slug,
+                post.CreatedDate,
+                post.IsPublished,
+                Categories = post.PostCategories!.Select(c => c.Category!.Title)
+            };
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetPublishedPosts()
@@ -207,6 +236,33 @@ public class PostController : ControllerBase
         try
         {
             var posts = await _postRepository.GetPublishedPosts();
+            var result = posts.Select(x => new
+            {
+                x.Id,
+                x.Title,
+                x.ShortDescription,
+                x.Description,
+                x.ThumbnailUrl,
+                Author = x.ApplicationUser!.FirstName + x.ApplicationUser!.LastName,
+                x.Slug,
+                x.CreatedDate,
+                Categories = x.PostCategories!.Select(c => c.Category!.Title)
+            });
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetRecentPublishedPosts()
+    {
+        try
+        {
+            var posts = await _postRepository.GetRecentPublishedPosts();
             var result = posts.Select(x => new
             {
                 x.Id,
